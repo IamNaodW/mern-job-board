@@ -17,7 +17,7 @@ const app = express();
 
 // CORS config
 const corsOptions = {
-  origin: ['http://localhost:5000', 'https://yourfrontend.com'],
+  origin: ['http://localhost:5173', 'https://yourfrontend.com'],
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));

@@ -7,7 +7,8 @@ export const register = async (req, res) => {
     const { name, email, password, role, companyName } = req.body;
 
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: 'Email already in use' });
+    if (existingUser)
+      return res.status(400).json({ message: 'Email already in use' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -21,11 +22,24 @@ export const register = async (req, res) => {
 
     await user.save();
 
-    res.status(201).json({ message: 'User registered successfully' });
+    // Generate JWT token
+    const token = generateToken({ userId: user._id, role: user.role });
+
+    // Return token and user info
+    res.status(201).json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        role: user.role,
+        companyName: user.companyName || null,
+      },
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 export const login = async (req, res) => {
   try {
