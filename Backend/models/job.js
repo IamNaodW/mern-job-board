@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const jobSchema = new mongoose.Schema({
   title: { type: String, required: true },
 
-  company: { type: String, required: true },
+  company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" }, // optional
 
   location: { type: String, required: true },
 
@@ -11,7 +11,7 @@ const jobSchema = new mongoose.Schema({
 
   skillsRequired: [{ type: String }],
 
-  salary: { type: String },
+  salary: { type: Number },
 
   postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 

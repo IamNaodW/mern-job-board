@@ -1,31 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
- const handleSubmit = async e => {
-  e.preventDefault();
-  setError('');
-  try {
-    const res = await fetch('http://localhost:5000/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Login failed');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    navigate('/');
-  } catch (err) {
-    setError(err.message);
-  }
-};
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Login failed");
 
+      localStorage.setItem("token", data.token);
+      login(data.user); // ⬅️ update global state
+
+      if (data.user.role === "employer") {
+        navigate("/employer/dashboard");
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white pt-20 flex items-center justify-center px-4">
@@ -33,6 +41,8 @@ export default function Login() {
         <h2 className="text-3xl font-extrabold text-gray-900 text-center">
           Sign in to your account
         </h2>
+
+        {error && <p className="text-red-500 text-center">{error}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <input

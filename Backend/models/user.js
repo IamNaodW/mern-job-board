@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
 
   resume: { type: String },
 
-  companyName: { type: String },
+  company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" }, // new field
 
   dateJoined: { type: Date, default: Date.now },
 });

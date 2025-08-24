@@ -11,6 +11,8 @@ import Register from './pages/RegisterPage.jsx';
 import Jobs from './pages/Jobs';
 import JobDetails from './pages/JobDetails';
 import Profile from './pages/Profile';
+import Companies from './pages/Companies.jsx';
+import About from './pages/About.jsx';
 
 // Employer Pages
 import Dashboard from './pages/employer/Dashboard';
@@ -28,6 +30,8 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/companies" element={<Companies />} />
+            <Route path="/about" element={<About />} />
 
             {/* Job Seeker Routes */}
             <Route path="/jobs" element={<Jobs />} />
@@ -36,8 +40,8 @@ export default function App() {
 
             {/* Employer Routes */}
             <Route path="/employer/dashboard" element={<Dashboard />} />
-            <Route path="/employer/post-job" element={<PostJob />} />
-            <Route path="/employer/manage-jobs" element={<ManageJobs />} />
+            <Route path="/employer/postjob" element={<PostJob />} />
+            <Route path="/employer/managejobs" element={<ManageJobs />} />
 
             {/* Fallback */}
             <Route path="*" element={<h1 className="text-center text-2xl">Page Not Found</h1>} />

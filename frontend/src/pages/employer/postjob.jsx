@@ -1,48 +1,133 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { apiFetch } from '../../api';
+import React, { useState } from "react";
 
 export default function PostJob() {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({
-    title: '',
-    company: '',
-    location: '',
-    salary: '',
-    description: '',
-    requirements: '',
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    location: "",
+    salary: "",
+    skillsRequired: "",
   });
-  const [error, setError] = useState('');
 
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
-  const handleSubmit = async e => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setLoading(true);
+    setMessage("");
+
+    // Convert skills string to array
+    const payload = {
+      ...formData,
+      skillsRequired: formData.skillsRequired.split(",").map((s) => s.trim()),
+    };
+
     try {
-      await apiFetch('/employer/jobs', {
-        method: 'POST',
-        body: JSON.stringify(form),
+      // Replace this with actual API call
+      console.log("Posting job:", payload);
+      setMessage("Job posted successfully!");
+      setFormData({
+        title: "",
+        description: "",
+        location: "",
+        salary: "",
+        skillsRequired: "",
       });
-      navigate('/employer/manage-jobs');
     } catch (err) {
-      setError(err.message);
+      console.error(err);
+      setMessage("Error posting job.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-lg">
-      <h1 className="text-3xl font-bold mb-6">Post a New Job</h1>
-      {error && <p className="text-red-600 mb-4">{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow">
-        {/* inputs as before */}
-        <input type="text" name="title" placeholder="Job Title" className="input" value={form.title} onChange={handleChange} required />
-        <input type="text" name="company" placeholder="Company Name" className="input" value={form.company} onChange={handleChange} required />
-        <input type="text" name="location" placeholder="Location" className="input" value={form.location} onChange={handleChange} required />
-        <input type="text" name="salary" placeholder="Salary Range" className="input" value={form.salary} onChange={handleChange} required />
-        <textarea name="description" placeholder="Job Description" className="input resize-y" value={form.description} onChange={handleChange} required />
-        <textarea name="requirements" placeholder="Job Requirements" className="input resize-y" value={form.requirements} onChange={handleChange} required />
-        <button type="submit" className="btn-primary w-full">Post Job</button>
+    <div className="max-w-4xl mx-auto mt-20 p-6 bg-white rounded-lg shadow">
+      <h1 className="text-2xl font-bold mb-6">Post a New Job</h1>
+
+      {message && (
+        <div
+          className={`mb-4 p-2 rounded ${
+            message.includes("success") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+          }`}
+        >
+          {message}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block font-semibold mb-1">Job Title</label>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block font-semibold mb-1">Description</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            rows="5"
+            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          ></textarea>
+        </div>
+
+        <div>
+          <label className="block font-semibold mb-1">Location</label>
+          <input
+            type="text"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block font-semibold mb-1">Salary</label>
+          <input
+            type="number"
+            name="salary"
+            value={formData.salary}
+            onChange={handleChange}
+            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div>
+          <label className="block font-semibold mb-1">
+            Skills Required (comma separated)
+          </label>
+          <input
+            type="text"
+            name="skillsRequired"
+            value={formData.skillsRequired}
+            onChange={handleChange}
+            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+        >
+          {loading ? "Posting..." : "Post Job"}
+        </button>
       </form>
     </div>
   );
